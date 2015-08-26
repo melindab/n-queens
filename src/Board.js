@@ -82,13 +82,12 @@
       var result = _.reduce(this.get(rowIndex), function(a, b) {
         return a + b;
       }); 
-      console.log(result);
       return result > 1;   
     },
 
     // test if any rows on this board contain conflicts
     hasAnyRowConflicts: function() {
-      for (var i = 0; i < this.rows().length; i++) {
+      for (var i = 0; i < this.get('n'); i++) {
         if (this.hasRowConflictAt(i)) {
           return true;
         }
@@ -104,7 +103,7 @@
     // test if a specific column on this board contains a conflict
     hasColConflictAt: function(colIndex) {
       var count = 0;
-      for (var i = 0; i < this.rows().length; i++) {
+      for (var i = 0; i < this.get('n'); i++) {
         if (this.get(i)[colIndex] === 1) {
           count++;
         }
@@ -114,7 +113,7 @@
 
     // test if any columns on this board contain conflicts
     hasAnyColConflicts: function() {
-      for (var i = 0; i < this.rows().length; i++) {
+      for (var i = 0; i < this.get('n'); i++) {
         if (this.hasColConflictAt(i)) {
           return true;
         }
@@ -129,12 +128,32 @@
     //
     // test if a specific major diagonal on this board contains a conflict
     hasMajorDiagonalConflictAt: function(majorDiagonalColumnIndexAtFirstRow) {
-      return false; // fixme
+      var i = majorDiagonalColumnIndexAtFirstRow < 0 ? 
+        Math.abs(majorDiagonalColumnIndexAtFirstRow) : 0;
+      var j = majorDiagonalColumnIndexAtFirstRow > 0 ? 
+        majorDiagonalColumnIndexAtFirstRow : 0;
+      var count = 0;
+
+      for (i, j; i < this.get('n'); i++, j++) {
+        if (this.get(i)[j] === 1) {
+          count++;
+        }
+      }
+      return count > 1;
     },
 
     // test if any major diagonals on this board contain conflicts
     hasAnyMajorDiagonalConflicts: function() {
-      return false; // fixme
+      for (var i = 0; i < this.get('n'); i++) {
+        for (var j = 0; j < this.get('n'); j++) {
+          if (this.get(i)[j] === 1) {
+            if (this.hasMajorDiagonalConflictAt(this._getFirstRowColumnIndexForMajorDiagonalOn(i, j))) {
+              return true;
+            }            
+          }
+        }
+      }
+      return false;
     },
 
 
